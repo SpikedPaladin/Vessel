@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gresources>
+    <gresource prefix="/example">
+        <!-- Shaders -->
+        <file>wave-vertex.glsl</file>
+        
+        <!-- Interface -->
+        <file preprocess="xml-stripblanks">window.ui</file>
+    </gresource>
+</gresources>

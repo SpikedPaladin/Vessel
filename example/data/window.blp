@@ -1,0 +1,151 @@
+using Gtk 4.0;
+using Adw 1;
+
+template $MainWindow : Adw.ApplicationWindow {
+    title: "Vessel";
+    default-width: 900;
+    default-height: 800;
+    
+    Box {
+        orientation: vertical;
+        
+        Adw.HeaderBar {
+            [end]
+            ToggleButton toggle_pane_button {
+                icon-name: "sidebar-show-symbolic";
+                active: false;
+            }
+            [end]
+            ToggleButton toggle_pause {
+                icon-name: "media-playback-pause-symbolic";
+                active: false;
+            }
+        }
+        
+        Adw.Flap flap {
+            reveal-flap: bind toggle_pane_button.active bidirectional;
+            flap-position: end;
+            
+            [flap]
+            ScrolledWindow {
+                width-request: 300;
+                hexpand: false;
+                
+                Box {
+                    margin-start: 8;
+                    margin-end: 8;
+                    margin-top: 8;
+                    margin-bottom: 10;
+                    spacing: 8;
+                    orientation: vertical;
+                    
+                    Adw.PreferencesGroup {
+                        title: "Render";
+                        
+                        Adw.ComboRow render_mode {
+                            title: "Render mode";
+                            model: StringList {
+                                strings ["Fill", "Wireframe", "Point"]
+                            };
+                        }
+                    }
+                    
+                    Adw.PreferencesGroup objects {
+                        title: "Objects";
+                        header-suffix: Button {
+                            styles ["flat"]
+                            Adw.ButtonContent {
+                                icon-name: "list-add-symbolic";
+                                label: "Add";
+                                
+                                Popover object_popover {
+                                    Box {
+                                        orientation: vertical;
+                                        
+                                        Button {
+                                            styles ["flat"]
+                                            label: "Cube";
+                                            clicked => $add_cube();
+                                        }
+                                        Button {
+                                            styles ["flat"]
+                                            label: "Sphere";
+                                            clicked => $add_sphere();
+                                        }
+                                        Button {
+                                            styles ["flat"]
+                                            label: "Wave Sphere";
+                                            clicked => $add_wave_sphere();
+                                        }
+                                        Button {
+                                            styles ["flat"]
+                                            label: "Rubik Cube";
+                                            clicked => $add_rubik_cube();
+                                        }
+                                    }
+                                }
+                            }
+                            clicked => $on_add_object();
+                        };
+                    }
+                    
+                    Adw.PreferencesGroup {
+                        title: "Camera";
+                        
+                        Adw.SpinRow center_x {
+                            title: "Center X";
+                            adjustment: Adjustment {
+                                lower: -100;
+                                upper: 100;
+                                page-increment: 10;
+                                step-increment: 1;
+                            };
+                        }
+                        Adw.SpinRow center_y {
+                            title: "Center Y";
+                            adjustment: Adjustment {
+                                lower: -100;
+                                upper: 100;
+                                page-increment: 10;
+                                step-increment: 1;
+                            };
+                        }
+                        Adw.SpinRow center_z {
+                            title: "Center Z";
+                            adjustment: Adjustment {
+                                lower: -100;
+                                upper: 100;
+                                page-increment: 10;
+                                step-increment: 1;
+                            };
+                        }
+                    }
+                }
+            }
+            
+            [content]
+            GLArea area {
+                resize => $on_resize();
+                render => $on_render();
+                realize => $on_realize();
+                
+                auto-render: true;
+                has-depth-buffer: true;
+                has-stencil-buffer: true;
+                
+                hexpand: true;
+                vexpand: true;
+                
+                GestureDrag drag {
+                    drag-begin => $on_start_rotate();
+                    drag-update => $on_rotate();
+                }
+                
+                EventControllerScroll {
+                    scroll => $zoom();
+                    flags: vertical;
+                }
+            }
+        }
+    }
+}
