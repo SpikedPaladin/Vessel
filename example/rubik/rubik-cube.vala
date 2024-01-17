@@ -139,7 +139,7 @@ public class RubikCube : Object3D {
             case 'L':
                 return Vec3.right();
             case 'U':
-                return Vec3.front();
+                return Vec3.up();
             default:
                 assert_not_reached();
         }
