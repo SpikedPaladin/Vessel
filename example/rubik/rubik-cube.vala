@@ -163,10 +163,9 @@ public class RubikCube : Object3D {
                 progress += amount;
                 
                 for (int i = 0; i < targets.length; i++) {
-                    Vec4 pos = Vec4.from_data(targets[i].prev_position.x, targets[i].prev_position.y, targets[i].prev_position.z, 1);
-                    Mat4 rotation_x = Mat4.identity();
-                    rotation_x.rotate(progress, ref axis);
-                    pos = rotation_x.mul_vec(ref pos);
+                    var layer_rotation = Mat3.identity();
+                    layer_rotation.rotate(progress, ref axis);
+                    targets[i].position = layer_rotation.mul_vec(ref targets[i].prev_position);
                     
                     if (axis in Vec3.from_data(0, 1, 0))
                         targets[i].rotation_y += amount;
@@ -174,7 +173,6 @@ public class RubikCube : Object3D {
                         targets[i].rotate_x(amount);
                     else
                         targets[i].rotate_z(amount);
-                    targets[i].position = Vec3.from_array(pos.data);
                 }
             },
             run_until = () => (backward && progress <= -90) || (!backward && progress >= 90),
