@@ -186,5 +186,39 @@ namespace Vessel {
             
             return res;
         }
+        
+        /**
+         * Multiples this matrix by a matrix that specifies a rotation around
+         * the given axis by the given angle.
+         * 
+         * Be careful with these rotations. Unlike quaternion-based transformations,
+         * they may incur gimbal lock.
+         * 
+         * @param angle_deg The rotation angle in degrees
+         * @param axis The rotation axis
+         */
+        public void rotate(float angle_deg, ref Vec3 axis) {
+            Vec3 axis_normalized = axis;
+            axis_normalized.normalize();
+            
+            float angle_rad = deg_to_rad(angle_deg);
+            
+            // M = uuT + (cos a) (1 - uuT) + (sin a) S
+            Mat3 tmp1 = Mat3.from_vec_mul(ref axis_normalized, ref axis_normalized);
+            Mat3 tmp2 = Mat3.identity();
+            tmp2.sub(ref tmp1);
+            tmp2.mul(Math.cosf(angle_rad));
+            tmp1.add(ref tmp2);
+            
+            Mat3 s = Mat3.from_data(
+                0, -axis_normalized.z, axis_normalized.y,
+                axis_normalized.z, 0, -axis_normalized.x,
+                -axis_normalized.y, axis_normalized.x, 0
+            );
+            s.mul(Math.sinf(angle_rad));
+            tmp1.add(ref s);
+            
+            mul_mat(ref tmp1);
+        }
     }
 }
