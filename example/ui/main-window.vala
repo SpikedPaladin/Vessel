@@ -135,27 +135,6 @@ public class MainWindow : Adw.ApplicationWindow {
         object.bind_property("z", z_row, "value", GLib.BindingFlags.BIDIRECTIONAL);
         row.add_row(z_row);
         
-        var rx_row = new Adw.SpinRow.with_range(-360, 360, 1) {
-            title = "Rotation X",
-            @value = 0
-        };
-        object.bind_property("rotation_x", rx_row, "value", GLib.BindingFlags.BIDIRECTIONAL);
-        row.add_row(rx_row);
-        
-        var ry_row = new Adw.SpinRow.with_range(-360, 360, 1) {
-            title = "Rotation Y",
-            @value = 0
-        };
-        object.bind_property("rotation_y", ry_row, "value", GLib.BindingFlags.BIDIRECTIONAL);
-        row.add_row(ry_row);
-        
-        var rz_row = new Adw.SpinRow.with_range(-360, 360, 1) {
-            title = "Rotation Z",
-            @value = 0
-        };
-        object.bind_property("rotation_z", rz_row, "value", GLib.BindingFlags.BIDIRECTIONAL);
-        row.add_row(rz_row);
-        
         Gtk.Button suffix;
         row.add_suffix(suffix = new Gtk.Button() {
             valign = Gtk.Align.CENTER,
