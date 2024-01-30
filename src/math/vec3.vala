@@ -29,6 +29,10 @@ namespace Vessel {
             this.data[2] = data[2];
         }
         
+        public float @get(int index) {
+            return data[index];
+        }
+        
         /**
          * Adds the given vector, component-wise.
          */

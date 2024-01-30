@@ -92,9 +92,7 @@ public class RubikCube : Object3D {
             queue.pop_all();
             cube.position = cube.initial_position;
             cube.push_position();
-            cube.rotation_x = 0;
-            cube.rotation_y = 0;
-            cube.rotation_z = 0;
+            cube.quaternion = Quaternion.identity();
         }
     }
     
@@ -168,7 +166,7 @@ public class RubikCube : Object3D {
                     targets[i].position = layer_rotation.mul_vec(ref targets[i].prev_position);
                     
                     if (axis in Vec3.from_data(0, 1, 0))
-                        targets[i].rotation_y += amount;
+                        targets[i].rotate_y(amount);
                     else if (axis in Vec3.from_data(1, 0, 0))
                         targets[i].rotate_x(amount);
                     else

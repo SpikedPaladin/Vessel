@@ -67,6 +67,10 @@ namespace Vessel {
             data[2 * 3 + 2] = 1;
         }
         
+        public Vec3 @get(int index) {
+            return Vec3.from_data(data[index], data[index + 1], data[index + 2]);
+        }
+        
         /**
          * Adds the given matrix, component-wise.
          */
@@ -219,6 +223,15 @@ namespace Vessel {
             tmp1.add(ref s);
             
             mul_mat(ref tmp1);
+        }
+        
+        public string to_string() {
+            var str = "";
+            
+            for (int i = 0; i < 3; i++) {
+                str += @"$(this[i])\n";
+            }
+            return str;
         }
     }
 }

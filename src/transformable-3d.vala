@@ -7,9 +7,7 @@ namespace Vessel {
         public float x { get { return _position.x; } set { _position.x = value; } }
         public float y { get { return _position.y; } set { _position.y = value; } }
         public float z { get { return _position.z; } set { _position.z = value; } }
-        public float rotation_x { get; set; default = 0; }
-        public float rotation_y { get; set; default = 0; }
-        public float rotation_z { get; set; default = 0; }
+        public Quaternion quaternion = Quaternion.identity();
         public Vec3 scale = Vec3.from_data(1, 1, 1);
         protected Vec3 up_vec = Vec3.up();
         protected Vec3 right_vec = Vec3.right();
@@ -22,6 +20,21 @@ namespace Vessel {
                 is_model_matrix_dirty = true;
             });
 	    }
+	    
+	    public void rotate_x(float amount) {
+            quaternion.mul(Quaternion.from_x_rotation(deg_to_rad(amount)));
+            is_model_matrix_dirty = true;
+        }
+        
+        public void rotate_y(float amount) {
+            quaternion.mul(Quaternion.from_y_rotation(deg_to_rad(amount)));
+            is_model_matrix_dirty = true;
+        }
+        
+        public void rotate_z(float amount) {
+            quaternion.mul(Quaternion.from_z_rotation(deg_to_rad(amount)));
+            is_model_matrix_dirty = true;
+        }
 	    
 	    public bool on_recalculate_model_matrix(Mat4? parent_matrix) {
             if (is_model_matrix_dirty) {
@@ -38,9 +51,7 @@ namespace Vessel {
             model_matrix.translate(ref _position);
             model_matrix.scale(ref scale);
             
-            model_matrix.rotate(rotation_y, ref up_vec);
-            model_matrix.rotate(rotation_x, ref right_vec);
-            model_matrix.rotate(rotation_z, ref front_vec);
+            model_matrix.rotate_mat(quaternion.to_matrix());
             
             if (parent_matrix != null) {
                 parent_matrix.mul_mat(ref model_matrix);

@@ -33,37 +33,64 @@ namespace Vessel {
         }
         
         public Quaternion.from_euler(Vec3 euler) {
-            float cy = Math.cosf(euler.x * 0.5F);
-            float sy = Math.sinf(euler.x * 0.5F);
-            float cr = Math.cosf(euler.z * 0.5F);
-            float sr = Math.sinf(euler.z * 0.5F);
-            float cp = Math.cosf(euler.y * 0.5F);
-            float sp = Math.sinf(euler.y * 0.5F);
-
-            w = cy * cr * cp + sy * sr * sp;
-            x = cy * sr * cp - sy * cr * sp;
-            y = cy * cr * sp + sy * sr * cp;
-            z = sy * cr * cp - cy * sr * sp;
+            float c1 = Math.cosf(euler.y / 2);
+            float s1 = Math.sinf(euler.y / 2);
+            float c2 = Math.cosf(euler.z / 2);
+            float s2 = Math.sinf(euler.z / 2);
+            float c3 = Math.cosf(euler.x / 2);
+            float s3 = Math.sinf(euler.x / 2);
+            float c1c2 = c1*c2;
+            float s1s2 = s1*s2;
+            
+            w = c1c2 * c3 - s1s2 * s3;
+          	x = c1c2 * s3 + s1s2 * c3;
+	        y = s1 * c2 * c3 + c1 * s2 * s3;
+	        z = c1 * s2 * c3 - s1 * c2 * s3;
         }
         
+        public Mat3 to_matrix() {
+            float wx, wy, wz, xx, yy, yz, xy, xz, zz, x2, y2, z2;
+            
+            // calculate coefficients
+            x2 = x + x; y2 = y + y;
+            z2 = z + z;
+            xx = x * x2; xy = x * y2; xz = x * z2;
+            yy = y * y2; yz = y * z2; zz = z * z2;
+            wx = w * x2; wy = w * y2; wz = w * z2;
+            
+            return Mat3.from_data(
+                1.0F - (yy + zz), xy - wz, xz + wy,
+                xy + wz, 1.0F - (xx + zz), yz - wx,
+                xz - wy, yz + wx, 1.0F - (xx + yy)
+            );
+        }
+        
+        // YZX order
         public Vec3 to_euler() {
             var euler = Vec3();
-            // Roll (x-axis rotation)
-            float sinr_cosp = +2F * (w * x + y * z);
-            float cosr_cosp = +1F - 2F * (x * x + y * y);
-            euler.x = Math.atan2f(sinr_cosp, cosr_cosp);
-
-            // Pitch (y-axis rotation)
-            float sinp = +2.0F * (w * y - z * x);
-            if (Math.fabsf(sinp) >= 1)
-                euler.y = Math.copysignf((float) Math.PI / 2F, sinp); // use 90 degrees if out of range
-            else
-                euler.y = Math.asinf(sinp);
-
-            // Yaw (z-axis rotation)
-            float siny_cosp = +2F * (w * z + x * y);
-            float cosy_cosp = +1F - 2F * (y * y + z * z);
-            euler.z = Math.atan2f(siny_cosp, cosy_cosp);
+            
+            float sqw = w*w;
+            float sqx = x*x;
+            float sqy = y*y;
+            float sqz = z*z;
+            float unit = sqx + sqy + sqz + sqw; // if normalised is one, otherwise is correction factor
+            float test = x*y + z*w;
+            if (test > 0.499 * unit) { // singularity at north pole
+                euler.y = 2 * Math.atan2f(x,w);
+                euler.z = (float) Math.PI/2;
+                euler.x = 0;
+                return euler;
+            }
+            if (test < -0.499 * unit) { // singularity at south pole
+                euler.y = -2 * Math.atan2f(x,w);
+                euler.z = -((float)Math.PI)/2;
+                euler.x = 0;
+                return euler;
+            }
+            euler.y = Math.atan2f(2*y*w-2*x*z , sqx - sqy - sqz + sqw);
+            euler.z = Math.asinf(2*test/unit);
+            euler.x = Math.atan2f(2*x*w-2*y*z , -sqx + sqy - sqz + sqw);
+            
             return euler;
         }
         
@@ -119,6 +146,8 @@ namespace Vessel {
             return angle;
         }
         
-        
+        public string to_string() {
+            return @"$w, $x, $y, $z";
+        }
     }
 }

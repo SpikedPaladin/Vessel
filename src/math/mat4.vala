@@ -274,6 +274,12 @@ namespace Vessel {
             mul_mat(ref tmp);
         }
         
+        public void rotate_mat(Mat3 rotation) {
+            var r = rotation;
+            var tmp = Mat4.expand(ref r);
+            mul_mat(ref tmp);
+        }
+        
         /**
          * Multiples this matrix by a matrix that specifies a rotation around
          * the given axis by the given angle.

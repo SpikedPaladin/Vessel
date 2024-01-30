@@ -46,41 +46,6 @@ public class ColoredCube : Object3D {
         20, 21, 22, 20, 22, 23
     };
     
-    public void rotate_x(float amount) {
-        if (rotation_y == -180) {
-            rotation_x -= amount;
-        } else if (rotation_y == -90)
-            rotation_z -= amount;
-        else
-            rotation_x += amount;
-    }
-    
-    public void rotate_z(float amount) {
-        
-    }
-    
-    public Vec3 get_front_vec() {
-        if (rotation_y == 90 || rotation_y == -270)
-            return Vec3.from_data(1, 0, 0);
-        if (rotation_y == -90 || rotation_y == 270)
-            return Vec3.from_data(-1, 0, 0);
-        if (Math.fabs(rotation_x) == 180)
-            return Vec3.from_data(0, 0, -1);
-        
-        return Vec3.from_data(0, 0, 1);
-    }
-    
-    public Vec3 get_right_vec() {
-        if (rotation_y == 90 || rotation_y == -270)
-            return Vec3.from_data(0, 0, -1);
-        if (rotation_y == -90 || rotation_y == 270)
-            return Vec3.from_data(0, 0, 1);
-        if (Math.fabs(rotation_x) == 180)
-            return Vec3.from_data(-1, 0, 0);
-        
-        return Vec3.from_data(1, 0, 0);
-    }
-    
     public override void pre_render() {
         if (!initialized) {
             set_data(vertices, null, null, colors, indices);
@@ -94,17 +59,6 @@ public class ColoredCube : Object3D {
     
     public void push_position() {
         prev_position = position;
-        if (rotation_y == rotation_x == -90 && rotation_z == 0) {
-            rotation_y = 0;
-            rotation_z = -90;
-        }
-        if (rotation_x == -180 && rotation_y == rotation_z == -90) {
-            rotation_x = 0;
-            rotation_y = 90;
-            rotation_z = 90;
-        }
-        front_vec = get_front_vec();
-        right_vec = get_right_vec();
     }
     
     public void set_face_color(Face face, float[] color) {
