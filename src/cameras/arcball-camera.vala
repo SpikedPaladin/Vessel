@@ -1,6 +1,6 @@
 namespace Vessel {
     
-    public class ArcballCameraNew : Camera {
+    public class ArcballCamera : Camera {
         public double last_mouse_pos_x;
         public double last_mouse_pos_y;
         

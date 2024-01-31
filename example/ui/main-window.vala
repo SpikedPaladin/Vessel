@@ -19,7 +19,7 @@ public class MainWindow : Adw.ApplicationWindow {
     [GtkChild]
     private unowned Adw.SpinRow center_z;
     
-    public ArcballCameraNew camera = new ArcballCameraNew();
+    public ArcballCamera camera = new ArcballCamera();
     private Renderer renderer;
     private float frame_count = 0;
     
