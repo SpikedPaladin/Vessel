@@ -1,6 +1,6 @@
 using Vessel;
 
-public class RubikCube : Object3D {
+public class RubikCube : Node3D {
     private float[] red = { 1, 0, 0 };
     private float[] green = { 0, 1, 0 };
     private float[] blue = { 0, 0, 1 };
@@ -181,8 +181,8 @@ public class RubikCube : Object3D {
         });
     }
     
-    public override void render(Camera camera, Mat4? parent_matrix = null, Material? scene_material = null) {
-        base.render(camera, parent_matrix, scene_material);
+    public override void render(Camera camera, Material? scene_material = null) {
+        base.render(camera, scene_material);
         
         queue.render();
         return;

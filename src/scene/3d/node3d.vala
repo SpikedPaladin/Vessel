@@ -1,8 +1,10 @@
 namespace Vessel {
     
-    public abstract class Transformable3D : Object {
+    public class Node3D : Node {
         protected Vec3 _position = Vec3();
         protected Mat4 model_matrix = Mat4.identity();
+        protected Mat4 mvp_matrix = Mat4.identity();
+        protected Mat4 mv_matrix = Mat4.identity();
         public Vec3 position { get { return _position; } set { _position = value; } }
         public float x { get { return _position.x; } set { _position.x = value; } }
         public float y { get { return _position.y; } set { _position.y = value; } }
@@ -21,6 +23,31 @@ namespace Vessel {
             });
 	    }
 	    
+	    public override void render(Camera camera, Material? scene_material = null) {
+            var parent = this.parent as Node3D;
+            if (parent != null)
+                calculate_model_matrix(parent.model_matrix);
+            else
+                calculate_model_matrix(null);
+            
+            // Apply camera before drawing the model
+            camera.apply(ref model_matrix, ref mv_matrix, ref mvp_matrix);
+        }
+	    
+	    public override void on_render_child(Node child, Camera camera, Material? scene_material = null) {
+            if (child is Node3D) {
+                if (is_model_matrix_dirty)
+                    ((Node3D) child).is_model_matrix_dirty = true;
+            }
+            
+            base.on_render_child(child, camera, scene_material);
+        }
+	    
+	    public override void post_render(Camera camera, Material? scene_material = null) {
+            base.post_render(camera, scene_material);
+            is_model_matrix_dirty = false;
+        }
+	    
 	    public void rotate_x(float amount) {
             quaternion.mul(Quaternion.from_x_rotation(deg_to_rad(amount)));
             is_model_matrix_dirty = true;
@@ -35,18 +62,11 @@ namespace Vessel {
             quaternion.mul(Quaternion.from_z_rotation(deg_to_rad(amount)));
             is_model_matrix_dirty = true;
         }
-	    
-	    public bool on_recalculate_model_matrix(Mat4? parent_matrix) {
-            if (is_model_matrix_dirty) {
-                calculate_model_matrix(parent_matrix);
-                is_model_matrix_dirty = false;
-                
-                return true;
-            }
-            return false;
-        }
         
         private void calculate_model_matrix(Mat4? parent_matrix) {
+            if (!is_model_matrix_dirty)
+                return;
+            
             model_matrix = Mat4.identity();
             model_matrix.translate(ref _position);
             model_matrix.scale(ref scale);
@@ -58,5 +78,5 @@ namespace Vessel {
                 model_matrix = parent_matrix;
             }
         }
-	}
+    }
 }

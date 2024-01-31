@@ -7,17 +7,12 @@ vessel_deps = [
 
 vessel_sources = files(
     'buffer-info.vala',
-    'geometry-3d.vala',
-    'object-3d.vala',
-    'transformable-3d.vala',
 )
 
 subdir('cameras')
-subdir('lights')
 subdir('materials')
 subdir('math')
-subdir('primitives')
-subdir('renderer')
+subdir('resources')
 subdir('scene')
 subdir('utils')
 

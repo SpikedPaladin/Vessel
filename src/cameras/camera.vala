@@ -1,6 +1,6 @@
 namespace Vessel {
     
-    public class Camera : Transformable3D {
+    public class Camera : Node3D {
         protected Mat4 projection_matrix;
         protected Mat4 view_matrix;
         protected Mat4 result_matrix;

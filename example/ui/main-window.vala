@@ -7,7 +7,7 @@ public class MainWindow : Adw.ApplicationWindow {
     [GtkChild]
     public unowned Gtk.ToggleButton toggle_pause;
     [GtkChild]
-    private unowned Adw.ComboRow render_mode;
+    private unowned Adw.ComboRow render_mode_row;
     [GtkChild]
     private unowned Adw.PreferencesGroup objects;
     [GtkChild]
@@ -20,17 +20,20 @@ public class MainWindow : Adw.ApplicationWindow {
     private unowned Adw.SpinRow center_z;
     
     public ArcballCamera camera = new ArcballCamera();
-    private Renderer renderer;
-    private float frame_count = 0;
+    private Viewport viewport;
+    private Material wave_material;
+    public int render_mode = -1;
     
     public MainWindow(Gtk.Application app) {
         Object(application: app);
         
-        render_mode.notify["selected"].connect(() => renderer.current_scene.render_mode = (int) render_mode.selected);
+        render_mode_row.notify["selected"].connect(() => render_mode = (int) render_mode_row.selected);
         
         center_x.notify["value"].connect(() => update_eye());
         center_y.notify["value"].connect(() => update_eye());
         center_z.notify["value"].connect(() => update_eye());
+        
+        wave_material = new Material(new VertexShader.from_uri("resource:///example/wave-vertex.glsl"));
         
         area.add_tick_callback(() => {
             if (!toggle_pause.active)
@@ -64,30 +67,41 @@ public class MainWindow : Adw.ApplicationWindow {
     
     [GtkCallback]
     public void add_cube() {
-        add_object(new Cube(1), "Cube");
+        add_object("Cube",
+            new Mesh3D() {
+                mesh = new BoxMesh(1)
+            }
+        );
     }
     
     [GtkCallback]
     public void add_sphere() {
-        add_object(new Sphere(1, 50, 50) { color = Color.blue() }, "Sphere");
+        add_object("Sphere",
+            new Mesh3D() {
+                mesh = new SphereMesh(1, 50, 50)
+            }
+        );
     }
     
     [GtkCallback]
     public void add_wave_sphere() {
-        var object = new Sphere(2, 60, 60);
-        object.material = new Material(new VertexShader.from_uri("resource:///example/wave-vertex.glsl"));
-        add_object(object, "Wave Sphere");
+        add_object("Wave Sphere",
+            new Mesh3D() {
+                mesh = new SphereMesh(2, 60, 60) {
+                    material = wave_material
+                }
+            }
+        );
     }
     
     [GtkCallback]
     public void add_rubik_cube() {
-        var object = new RubikCube();
-        add_object(object, "Rubik Cube");
+        add_object("Rubik Cube", new RubikCube());
     }
     
-    public void add_object(Object3D object, string name) {
+    public void add_object(string name, Node3D object) {
         object_popover.popdown();
-        renderer.current_scene.add_child(object);
+        viewport.current_scene.add_child(object);
         var row = new Adw.ExpanderRow() {
             title = name
         };
@@ -143,7 +157,7 @@ public class MainWindow : Adw.ApplicationWindow {
             css_classes = { "flat" }
         });
         suffix.clicked.connect(() => {
-            renderer.current_scene.childs.remove(object);
+            viewport.current_scene.children.remove(object);
             objects.remove(row);
         });
         objects.add(row);
@@ -162,29 +176,43 @@ public class MainWindow : Adw.ApplicationWindow {
     
     [GtkCallback]
     public bool on_render(Gtk.GLArea area, Gdk.GLContext ctx) {
-        area.make_current();
+        switch (render_mode) {
+            case 0:
+                GL.glPolygonMode(GL.GL_FRONT_AND_BACK, GL.GL_FILL);
+                render_mode = -1;
+                break;
+            case 1:
+                GL.glPolygonMode(GL.GL_FRONT_AND_BACK, GL.GL_LINE);
+                render_mode = -1;
+                break;
+            case 2:
+                GL.glPolygonMode(GL.GL_FRONT_AND_BACK, GL.GL_POINT);
+                render_mode = -1;
+                break;
+        }
         
-        renderer.current_scene.childs.foreach((child) => {
-            child.material.time = frame_count;
-        });
-        frame_count++;
+        wave_material.time++;
         
-        renderer.render();
+        viewport.render();
         return true;
     }
     
     [GtkCallback]
     public void on_realize(Gtk.Widget area) {
         (area as Gtk.GLArea)?.make_current();
-        renderer = new Renderer();
-        renderer.current_scene.camera = camera;
-        renderer.current_scene.camera.position = Vec3.from_data(0, 0, 3);
-        renderer.current_scene.camera.look_at();
-        add_object(new Cube(1), "Example Cube");
+        viewport = new Viewport();
+        viewport.current_camera = camera;
+        viewport.current_camera.position = Vec3.from_data(0, 0, 3);
+        viewport.current_camera.look_at();
+        add_object("Example Cube",
+            new Mesh3D() {
+                mesh = new BoxMesh(1)
+            }
+        );
     }
     
     [GtkCallback]
     public void on_resize(int width, int height) {
-        renderer.resize(width, height);
+        viewport.resize(width, height);
     }
 }

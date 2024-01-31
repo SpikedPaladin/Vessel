@@ -2,7 +2,8 @@ using GL;
 
 namespace Vessel {
     
-    public class Geometry3D {
+    public class Mesh {
+        public Material material;
         private bool have_created_buffers;
         private uint vao_id = 0;
         
@@ -14,7 +15,7 @@ namespace Vessel {
         private const int COLOR_BUFFER_KEY   = 3;
         private const int INDEX_BUFFER_KEY   = 4;
         
-        public Geometry3D() {
+        public Mesh() {
             have_created_buffers = false;
             
             buffers = new BufferInfo[] {
@@ -39,6 +40,29 @@ namespace Vessel {
                     target = GL_ELEMENT_ARRAY_BUFFER
                 }
             };
+        }
+        
+        public void render(Material? scene_material, Mat4 model_matrix, Mat4 mv_matrix, Mat4 mvp_matrix) {
+            var material = this.material == null ? scene_material : this.material;
+            make_current();
+            
+            material.use_program();
+            
+            material.set_texture_coords(get_texture_coord_buffer_info().id);
+            material.set_normals(get_normal_buffer_info().id);
+            material.set_vertex_colors(get_color_buffer_info().id);
+            
+            material.set_vertices(get_vertex_buffer_info().id);
+            material.set_light_pos();
+            
+            material.apply_params();
+            
+            material.set_model_matrix(model_matrix);
+            material.set_model_view_matrix(mv_matrix);
+            material.set_model_view_projection_matrix(mvp_matrix);
+            
+            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, get_index_buffer_info().id);
+            glDrawElements(GL_TRIANGLES, get_num_indices(), GL_UNSIGNED_SHORT, null);
         }
         
         public void set_data(
@@ -124,7 +148,7 @@ namespace Vessel {
                 create_buffers();
         }
         
-        ~Geometry3D() {
+        ~Mesh() {
             if (vao_id != 0) {
                 uint[] id_array = { vao_id };
                 glDeleteVertexArrays(1, id_array);

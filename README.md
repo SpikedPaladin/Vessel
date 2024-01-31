@@ -6,34 +6,26 @@
 Simple 3D Engine made with Vala  
 _Compatible with Gtk.GLArea_
 
-![Screenshot showing a example GTK application with Vessel.Renderer in Gtk.GLArea.](screenshot.png)
+![Screenshot showing a example GTK application with Vessel.Viewport in Gtk.GLArea.](screenshot.png)
 
 ## Usage
 
 ### Basic
-1. Create `Vessel.Renderer` in GL context
+1. Create `Vessel.Viewport` in GL context
 ```vala
-var renderer = new Vessel.Renderer();
+var viewport = new Vessel.Viewport();
 ```
-2. Add objects to `Vessel.Scene` for example `Vessel.Cube`
+2. Add nodes to `Vessel.Node` for example `Vessel.Mesh3D`
 ```vala
-renderer.current_scene.add_child(new Vessel.Cube(1));
+renderer.current_scene.add_child(new Mesh3D() { mesh = new BoxMesh(1) });
 ```
-3. Call `render` method from `Vessel.Renderer` in GL context
+3. Call `render` method from `Vessel.Viewport` in GL context
 ```vala
 renderer.render();
 ```
-4. Call `resize` method from `Vessel.Renderer` on each resize event from your GL context owner
+4. Call `resize` method from `Vessel.Viewport` on each resize event from your GL context owner
 ```vala
 renderer.resize(width, height);
-```
-
-### Custom objects
-Extend Vessel.Object3D
-```vala
-public class MyObject : Object3D {
-	...
-}
 ```
 
 ## Example

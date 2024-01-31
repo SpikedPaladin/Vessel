@@ -1,15 +1,8 @@
 namespace Vessel {
     
-    public class Cube : Object3D {
-        private float size;
+    public class BoxMesh : PrimitiveMesh {
         
-        public Cube(float size) {
-            this.size = size;
-            
-            init();
-        }
-        
-        public void init() {
+        public BoxMesh(float size) {
             float halfSize = size * 0.5F;
             float[] vertices = {
                 halfSize, halfSize, halfSize, 			-halfSize, halfSize, halfSize,
@@ -67,7 +60,7 @@ namespace Vessel {
                 20, 21, 22, 20, 22, 23
             };
             
-            set_data(vertices, normals, texture_coords, colors, indices);
+            set_data(vertices, normals, texture_coords, colors, indices, false);
         }
     }
 }

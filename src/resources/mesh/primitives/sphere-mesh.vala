@@ -1,8 +1,8 @@
 namespace Vessel {
     
-    public class Sphere : Object3D {
+    public class SphereMesh : Mesh {
         
-        public Sphere(float radius, int stacks, int sectors, bool mirror_texture_coords = false) {
+        public SphereMesh(float radius, int stacks, int sectors, bool mirror_texture_coords = false) {
             int numVertices = (stacks + 1) * (sectors + 1);
 		    int numIndices = 2 * stacks * (sectors - 1) * 3;
             
@@ -86,7 +86,7 @@ namespace Vessel {
 			    colors[j + 3] = 1;
 		    }
 		    
-		    set_data(vertices, normals, texture_coords, colors, indices);
+		    set_data(vertices, normals, texture_coords, colors, indices, false);
         }
     }
 }

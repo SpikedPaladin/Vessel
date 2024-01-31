@@ -1,11 +1,8 @@
 using Vessel;
 
-public class ColoredCube : Object3D {
+public class ColoredCube : Mesh3D {
     public Vec3 initial_position = Vec3();
     public Vec3 prev_position = Vec3();
-    public new Vec3 up_vec = Vec3.up();
-    public new Vec3 front_vec = Vec3.front();
-    public new Vec3 right_vec = Vec3.right();
     private bool initialized = false;
     
     public float[] vertices = {
@@ -48,7 +45,8 @@ public class ColoredCube : Object3D {
     
     public override void pre_render() {
         if (!initialized) {
-            set_data(vertices, null, null, colors, indices);
+            mesh = new Mesh();
+            mesh.set_data(vertices, null, null, colors, indices, false);
             initial_position = prev_position = position;
             
             initialized = true;
