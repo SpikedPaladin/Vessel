@@ -4,6 +4,8 @@ namespace Vessel {
     
     public class Mesh {
         public Material material;
+        public int draw_mode = GL_TRIANGLES;
+        
         private bool have_created_buffers;
         private uint vao_id = 0;
         
@@ -62,7 +64,7 @@ namespace Vessel {
             material.set_model_view_projection_matrix(mvp_matrix);
             
             glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, get_index_buffer_info().id);
-            glDrawElements(GL_TRIANGLES, get_num_indices(), GL_UNSIGNED_SHORT, null);
+            glDrawElements(draw_mode, get_num_indices(), GL_UNSIGNED_SHORT, null);
         }
         
         public void set_data(
