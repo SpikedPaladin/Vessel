@@ -2,62 +2,55 @@ namespace Vessel {
     
     public class BoxMesh : PrimitiveMesh {
         
-        public BoxMesh(float size) {
-            float halfSize = size * 0.5F;
+        public BoxMesh(Vec3 size = Vec3.from_data(1, 1, 1)) {
+            float half_x = size.x * 0.5F;
+            float half_y = size.y * 0.5F;
+            float half_z = size.z * 0.5F;
+            
             float[] vertices = {
-                halfSize, halfSize, halfSize, 			-halfSize, halfSize, halfSize,
-                -halfSize, -halfSize, halfSize,			halfSize, -halfSize, halfSize, // 0-1-2-3 front
-
-                halfSize, halfSize, -halfSize,			 halfSize, halfSize, halfSize,
-                halfSize, -halfSize, halfSize,			 halfSize, -halfSize, -halfSize, // 5-0-3-4 right
-
-                -halfSize, halfSize, -halfSize,			halfSize, halfSize, -halfSize,
-                halfSize, -halfSize, -halfSize, 		-halfSize, -halfSize, -halfSize, // 6-5-4-7 back
-
-                -halfSize, halfSize, halfSize, 			-halfSize, halfSize, -halfSize,
-                -halfSize, -halfSize, -halfSize,		-halfSize,-halfSize, halfSize, // 1-6-7-2 left
-
-                -halfSize, halfSize, halfSize,			 halfSize, halfSize, halfSize,
-                halfSize, halfSize, -halfSize,			-halfSize, halfSize, -halfSize,  // 1-0-5-6 top
-
-                halfSize, -halfSize, halfSize, 			-halfSize, -halfSize, halfSize,
-                -halfSize, -halfSize, -halfSize,		halfSize, -halfSize, -halfSize, // 3-2-7-4 bottom
+                // 0-1-2-3 Front
+                -half_x, half_y, half_z,
+                half_x, half_y, half_z,
+                half_x, -half_y, half_z,
+                -half_x, -half_y, half_z,
+                
+                // 4-5-6-7 Back
+                -half_x, half_y, -half_z,
+                half_x, half_y, -half_z,
+                half_x, -half_y, -half_z,
+                -half_x, -half_y, -half_z
             };
             
             float[] texture_coords = {
-                0, 1,   1, 1,   1, 0,   0, 0, // front
-                0, 0,   0, 1,   1, 1,   1, 0, // right
-                0, 1,   1, 1,   1, 0,   0, 0, // back
-                0, 0,   0, 1,   1, 1,   1, 0, // left
-                0, 0,   0, 1,   1, 1,   1, 0, // top
-                0, 0,   0, 1,   1, 1,   1, 0, // bottom
+                0, 1,   1, 1,   1, 0,   0, 0, // Front
+                0, 0,   0, 1,   1, 1,   1, 0, // Right
+                0, 0,   0, 1,   1, 1,   1, 0, // Bottom
+                0, 0,   0, 1,   1, 1,   1, 0, // Left
+                0, 0,   0, 1,   1, 1,   1, 0, // Top
+                0, 1,   1, 1,   1, 0,   0, 0  // Back
             };
             
             float[] colors = {
-                1, 1, 1, 1,   1, 1, 1, 1,   1, 1, 1, 1,   1, 1, 1, 1,
-                1, 1, 1, 1,   1, 1, 1, 1,   1, 1, 1, 1,   1, 1, 1, 1,
-                1, 1, 1, 1,   1, 1, 1, 1,   1, 1, 1, 1,   1, 1, 1, 1,
-                1, 1, 1, 1,   1, 1, 1, 1,   1, 1, 1, 1,   1, 1, 1, 1,
-                1, 1, 1, 1,   1, 1, 1, 1,   1, 1, 1, 1,   1, 1, 1, 1,
-                1, 1, 1, 1,   1, 1, 1, 1,   1, 1, 1, 1,   1, 1, 1, 1
+                1, 1, 1, 1,   1, 1, 1, 1,   1, 1, 1, 1,   1, 1, 1, 1, // Front
+                1, 1, 1, 1,   1, 1, 1, 1,   1, 1, 1, 1,   1, 1, 1, 1  // Back
             };
             
             float[] normals = {
-                0, 0, 1,   0, 0, 1,   0, 0, 1,   0, 0, 1, // front
-                1, 0, 0,   1, 0, 0,   1, 0, 0,   1, 0, 0, // right
-                0, 0, -1,  0, 0, -1,  0, 0, -1,  0, 0, -1, // back
-                -1, 0, 0,  -1, 0, 0,  -1, 0, 0,  -1, 0, 0, // left
-                0, 1, 0,   0, 1, 0,   0, 1, 0,   0, 1, 0, // top
-                0, -1, 0,  0, -1, 0,  0, -1, 0,  0, -1, 0, // bottom
+                0, 0, 1,    0, 0, 1,    0, 0, 1,    0, 0, 1,  // Front
+                1, 0, 0,    1, 0, 0,    1, 0, 0,    1, 0, 0,  // Right
+                0, -1, 0,   0, -1, 0,   0, -1, 0,   0, -1, 0, // Bottom
+                -1, 0, 0,   -1, 0, 0,   -1, 0, 0,   -1, 0, 0, // Left
+                0, 1, 0,    0, 1, 0,    0, 1, 0,    0, 1, 0,  // Top
+                0, 0, -1,   0, 0, -1,   0, 0, -1,   0, 0, -1  // Back
             };
             
             ushort[] indices = {
-                0, 1, 2, 0, 2, 3,
-                4, 5, 6, 4, 6, 7,
-                8, 9, 10, 8, 10, 11,
-                12, 13, 14, 12, 14, 15,
-                16, 17, 18, 16, 18, 19,
-                20, 21, 22, 20, 22, 23
+                0, 1, 2,   0, 2, 3, // Front
+                2, 1, 5,   2, 5, 6, // Right
+                3, 2, 6,   3, 6, 7, // Bottom
+                0, 3, 7,   0, 7, 4, // Left
+                1, 0, 4,   1, 4, 5, // Top
+                6, 5, 4,   6, 4, 7  // Back
             };
             
             set_data(vertices, normals, texture_coords, colors, indices, false);

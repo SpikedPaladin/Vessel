@@ -69,7 +69,7 @@ public class MainWindow : Adw.ApplicationWindow {
     public void add_cube() {
         add_object("Cube",
             new Mesh3D() {
-                mesh = new BoxMesh(1)
+                mesh = new BoxMesh()
             }
         );
     }
@@ -206,7 +206,7 @@ public class MainWindow : Adw.ApplicationWindow {
         viewport.current_camera.look_at();
         add_object("Example Cube",
             new Mesh3D() {
-                mesh = new BoxMesh(1)
+                mesh = new BoxMesh()
             }
         );
     }
