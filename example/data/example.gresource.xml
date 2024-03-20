@@ -7,4 +7,20 @@
         <!-- Interface -->
         <file preprocess="xml-stripblanks">window.ui</file>
     </gresource>
+    <gresource prefix="/example/materials">
+        <file alias="ChessBoard.mtl">models/ChessBoard.mtl</file>
+        <file alias="ChessPiece.mtl">models/ChessPiece.mtl</file>
+        <file alias="Cube.mtl">models/Cube.mtl</file>
+    </gresource>
+    <gresource prefix="/example/models">
+        <file alias="ChessBoard.obj">models/ChessBoard.obj</file>
+        <file alias="ChessPiecePawnBlack.obj">models/ChessPiecePawnBlack.obj</file>
+        <file alias="ChessPiecePawnWhite.obj">models/ChessPiecePawnWhite.obj</file>
+        <file alias="Cube.obj">models/Cube.obj</file>
+        <file alias="Icosphere.obj">models/Icosphere.obj</file>
+        <file alias="Triangle.obj">models/Triangle.obj</file>
+    </gresource>
+    <gresource prefix="/example/textures">
+        <file alias="StoneMarbleCalacatta004_COL_1K.jpg">textures/StoneMarbleCalacatta004_COL_1K.jpg</file>
+    </gresource>
 </gresources>

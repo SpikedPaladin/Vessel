@@ -23,7 +23,7 @@ namespace Vessel {
             });
 	    }
 	    
-	    public override void render(Camera camera, Material? scene_material = null) {
+	    public override void render(Camera camera, ShaderMaterial scene_material) {
             var parent = this.parent as Node3D;
             if (parent != null)
                 calculate_model_matrix(parent.model_matrix);
@@ -34,7 +34,7 @@ namespace Vessel {
             camera.apply(ref model_matrix, ref mv_matrix, ref mvp_matrix);
         }
 	    
-	    public override void on_render_child(Node child, Camera camera, Material? scene_material = null) {
+	    public override void on_render_child(Node child, Camera camera, ShaderMaterial scene_material) {
             if (child is Node3D) {
                 if (is_model_matrix_dirty)
                     ((Node3D) child).is_model_matrix_dirty = true;
@@ -43,7 +43,7 @@ namespace Vessel {
             base.on_render_child(child, camera, scene_material);
         }
 	    
-	    public override void post_render(Camera camera, Material? scene_material = null) {
+	    public override void post_render(Camera camera, ShaderMaterial scene_material) {
             base.post_render(camera, scene_material);
             is_model_matrix_dirty = false;
         }

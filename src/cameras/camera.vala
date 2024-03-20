@@ -1,8 +1,8 @@
 namespace Vessel {
     
     public class Camera : Node3D {
-        protected Mat4 projection_matrix;
-        protected Mat4 view_matrix;
+        public Mat4 projection_matrix;
+        public Mat4 view_matrix;
         protected Mat4 result_matrix;
         protected Mat4 total_matrix;
         
@@ -11,6 +11,74 @@ namespace Vessel {
         
         public Camera() {
             reset();
+        }
+        
+        public Vec3 get_up() {
+            var tmp = up;
+            tmp.normalize();
+            return tmp;
+        }
+        
+        public Vec3 get_right() {
+            var forward = get_forward();
+            var up = get_up();
+            
+            var result = forward.cross_product(ref up);
+            result.normalize();
+            
+            return result;
+        }
+        
+        public Vec3 get_forward() {
+            var tmp1 = center;
+            var tmp2 = position;
+            tmp1.sub(ref tmp2);
+            tmp1.normalize();
+            return tmp1;
+        }
+        
+        public void yaw(float angle) {
+            var target_position = center;
+            var tmp2 = position;
+            target_position.sub(ref tmp2);
+            target_position.rotate(up, angle);
+            
+            tmp2.add(ref target_position);
+            center = tmp2;
+        }
+        
+        public void pitch(float angle) {
+            var target_position = center;
+            var tmp1 = up;
+            var tmp2 = position;
+            target_position.sub(ref tmp2);
+            
+            float maxAngleUp = tmp1.angle(target_position);
+            maxAngleUp -= 0.001f; // avoid numerical errors
+            if (angle > maxAngleUp) angle = maxAngleUp;
+            
+            // Clamp view down
+            float maxAngleDown = tmp1.negated().angle(target_position);
+            maxAngleDown *= -1.0f; // downwards angle is negative
+            maxAngleDown += 0.001f; // avoid numerical errors
+            if (angle < maxAngleDown) angle = maxAngleDown;
+            
+            target_position.rotate(get_right(), angle);
+            
+            tmp2.add(ref target_position);
+            center = tmp2;
+        }
+        
+        public void move_forward(float distance) {
+            var forward = get_forward();
+            forward.mul(distance);
+            
+            var tmp = position;
+            tmp.add(ref forward);
+            position = tmp;
+            tmp = center;
+            tmp.add(ref forward);
+            center = tmp;
         }
         
         private void update() {

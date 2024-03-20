@@ -124,6 +124,45 @@ namespace Vessel {
             return other.x == x && other.y == y && other.z == z;
         }
         
+        public Vec3 negated() {
+            return Vec3.from_data(-x, -y, -z);
+        }
+        
+        public float angle(Vec3 other) {
+            var cross = cross_product(ref other);
+            var len = cross.norm();
+            var dot = dot_product(ref other);
+            
+            return Math.atan2f(len, dot);
+        }
+        
+        public void rotate(Vec3 axis, float angle) {
+            float length = axis.norm();
+            if (length == 0) length = 1;
+            float ilength = 1 / length;
+            axis.x *= ilength;
+            axis.y *= ilength;
+            axis.z *= ilength;
+
+            angle /= 2;
+            float a = Math.sinf(angle);
+            float b = axis.x * a;
+            float c = axis.y * a;
+            float d = axis.z * a;
+            a = Math.cosf(angle);
+            Vec3 w = Vec3.from_data(b, c, d);
+            
+            Vec3 wv = w.cross_product(ref this);
+            Vec3 wwv = w.cross_product(ref wv);
+            
+            wv.mul(2 * a);
+            wwv.mul(2);
+
+            x += wv.x + wwv.x;
+            y += wv.y + wwv.y;
+            z += wv.z + wwv.z;
+        }
+        
         /**
          * Convenience accessor for data[0].
          */

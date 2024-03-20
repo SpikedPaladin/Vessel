@@ -4,11 +4,10 @@ namespace Vessel {
         
         construct {
             mesh = new Mesh();
-            mesh.draw_mode = GL.GL_LINES;
             
-            float[] vertices = {};
-            ushort[] indices = {};
-            float[] colors = {};
+            var vertices = new FloatArrayBuffer();
+            var colors = new FloatArrayBuffer();
+            var indices = new UShortArrayBuffer();
             
             var lines = 20F;
             var size = 10F;
@@ -28,20 +27,18 @@ namespace Vessel {
             }
             
             for (int i = 0; i < points.length; i++) {
-                var point = points[i];
-                vertices += point.x;
-                vertices += point.y;
-                vertices += point.z;
-                
-                indices += (ushort) i;
-                
-                colors += 0.33F;
-                colors += 0.33F;
-                colors += 0.33F;
-                colors += 1;
+                vertices.append_vec3(points[i]);
+                indices.append((ushort) i);
+                colors.append_vec4(Vec4.from_data(0.33F, 0.33F, 0.33F, 1F));
             }
             
-            mesh.set_data(vertices, null, null, colors, indices, false);
+            var arrays = new HashTable<ArrayType, ArrayBuffer>(null, null);
+            
+            arrays[ArrayType.ARRAY_VERTEX] = vertices;
+            arrays[ArrayType.ARRAY_COLOR] = colors;
+            arrays[ArrayType.ARRAY_INDEX] = indices;
+            
+            mesh.add_surface_from_arrays(arrays, GL.LINES);
         }
     }
 }

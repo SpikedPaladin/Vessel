@@ -34,13 +34,14 @@ namespace Vessel {
         }
         
         public void set_light_pos() {
-            glUniform3f(light_pos_handle, 0F, 0F, 5F);
+            program.set_vec3("lightPos", Vec3.from_data(0.5F, 0.5F, 0.5F));
+            //glUniform3f(light_pos_handle, 0F, 0F, 5F);
         }
         
-        public override void set_locations(uint program_handle) {
-            base.set_locations(program_handle);
+        public override void set_locations(GL.Program program) {
+            base.set_locations(program);
             
-            light_pos_handle = get_uniform_location("lightPos");
+            //light_pos_handle = get_uniform_location("lightPos");
         }
     }
 }

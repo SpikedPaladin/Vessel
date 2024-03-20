@@ -4,6 +4,7 @@ vessel_sources += files(
     'mat4.vala',
     'matrix-util.vala',
     'quaternion.vala',
+    'vec2.vala',
     'vec3.vala',
     'vec4.vala'
 )

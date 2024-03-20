@@ -4,20 +4,20 @@ namespace Vessel {
     
     public abstract class Shader : Object {
         public string shader_string;
-        private uint program_handle;
+        protected GL.Program program;
         
         public virtual void apply_params() {}
         
-        public virtual void set_locations(uint program_handle) {
-            this.program_handle = program_handle;
+        public virtual void set_locations(GL.Program program) {
+            this.program = program;
         }
         
-        public int get_uniform_location(string name) {
-            return glGetUniformLocation(program_handle, name);
+        public GL.Uniform get_uniform_location(string name) {
+            return program.get_uniform_location(name);
         }
         
         public int get_attrib_location(string name) {
-            return glGetAttribLocation(program_handle, name);
+            return program.get_attrib_location(name);
         }
     }
 }

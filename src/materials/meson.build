@@ -3,5 +3,7 @@ vessel_sources += files(
     'shaders/shader.vala',
     'shaders/vertex-shader.vala',
     
-    'material.vala'
+    'material.vala',
+    'shader-material.vala',
+    'standart-material.vala'
 )

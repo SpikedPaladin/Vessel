@@ -1,13 +1,12 @@
 vessel_deps = [
+    dependency('gtk4'),
     dependency('glib-2.0'),
     dependency('gobject-2.0'),
     dependency('gio-2.0'),
     dependency('gl')
 ]
 
-vessel_sources = files(
-    'buffer-info.vala',
-)
+vessel_sources = files()
 
 subdir('cameras')
 subdir('materials')

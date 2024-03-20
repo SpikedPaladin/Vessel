@@ -34,6 +34,15 @@ public class ColoredCube : Mesh3D {
         0, 0, 0, 1,   0, 0, 0, 1,   0, 0, 0, 1,   0, 0, 0, 1
     };
     
+    float[] normals = {
+        0, 0, 1,   0, 0, 1,   0, 0, 1,   0, 0, 1, // front
+        1, 0, 0,   1, 0, 0,   1, 0, 0,   1, 0, 0, // right
+        0, 0, -1,  0, 0, -1,  0, 0, -1,  0, 0, -1, // back
+        -1, 0, 0,  -1, 0, 0,  -1, 0, 0,  -1, 0, 0, // left
+        0, 1, 0,   0, 1, 0,   0, 1, 0,   0, 1, 0, // top
+        0, -1, 0,  0, -1, 0,  0, -1, 0,  0, -1, 0, // bottom
+    };
+    
     ushort[] indices = {
         0, 1, 2, 0, 2, 3,
         4, 5, 6, 4, 6, 7,
@@ -43,16 +52,24 @@ public class ColoredCube : Mesh3D {
         20, 21, 22, 20, 22, 23
     };
     
-    public override void pre_render() {
+    public override void pre_render(Camera camera, ShaderMaterial scene_material) {
         if (!initialized) {
             mesh = new Mesh();
-            mesh.set_data(vertices, null, null, colors, indices, false);
+            
+            var arrays = new HashTable<ArrayType, ArrayBuffer>(null, null);
+            
+            arrays[ArrayType.ARRAY_VERTEX] = new FloatArrayBuffer.from_array(vertices);
+            arrays[ArrayType.ARRAY_NORMAL] = new FloatArrayBuffer.from_array(normals);
+            arrays[ArrayType.ARRAY_COLOR] = new FloatArrayBuffer.from_array(colors);
+            arrays[ArrayType.ARRAY_INDEX] = new UShortArrayBuffer.from_array(indices);
+            
+            mesh.add_surface_from_arrays(arrays);
             initial_position = prev_position = position;
             
             initialized = true;
         }
         
-        base.pre_render();
+        base.pre_render(camera, scene_material);
     }
     
     public void push_position() {

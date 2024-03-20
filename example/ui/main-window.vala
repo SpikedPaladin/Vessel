@@ -33,7 +33,7 @@ public class MainWindow : Adw.ApplicationWindow {
         center_y.notify["value"].connect(() => update_eye());
         center_z.notify["value"].connect(() => update_eye());
         
-        wave_material = new Material(new VertexShader.from_uri("resource:///example/wave-vertex.glsl"));
+        wave_material = new ShaderMaterial(new VertexShader.from_uri("resource:///example/wave-vertex.glsl"));
         
         area.add_tick_callback(() => {
             if (!toggle_pause.active)
@@ -50,12 +50,10 @@ public class MainWindow : Adw.ApplicationWindow {
     
     [GtkCallback]
     public bool zoom(double x, double y) {
-        var new_pos = camera.position;
         if (y > 0) {
-            new_pos.mul(1.05F);
+            camera.move_forward(-0.05F);
         } else
-            new_pos.mul(0.95F);
-        camera.position = new_pos;
+            camera.move_forward(0.05F);
         camera.look_at();
         return true;
     }
@@ -97,6 +95,18 @@ public class MainWindow : Adw.ApplicationWindow {
     [GtkCallback]
     public void add_rubik_cube() {
         add_object("Rubik Cube", new RubikCube());
+    }
+    
+    [GtkCallback]
+    public void add_chess_board() {
+        try {
+            add_object("Chess Board", new Mesh3D() {
+                scale = Vec3.from_data(4, 4, 4),
+                mesh = WavefrontLoader.load(@"/example/models/ChessBoard.obj", "/example/materials", "/example/textures")
+            });
+        } catch (Error error) {
+            message(@"Error while loading ChessBoard.obj: $(error.message)");
+        }
     }
     
     public void add_object(string name, Node3D object) {
@@ -175,23 +185,38 @@ public class MainWindow : Adw.ApplicationWindow {
     }
     
     [GtkCallback]
+    public void on_fp_rotate(double x, double y) {
+        camera.yaw((float) (x - camera.last_mouse_pos_x) * 0.001F);
+        camera.pitch((float) (y - camera.last_mouse_pos_y) * 0.001F);
+        camera.last_mouse_pos_x = x;
+        camera.last_mouse_pos_y = y;
+        camera.look_at();
+    }
+    
+    [GtkCallback]
+    public void on_start_fp_rotate(double x, double y) {
+        camera.last_mouse_pos_x = 0;
+        camera.last_mouse_pos_y = 0;
+    }
+    
+    [GtkCallback]
     public bool on_render(Gtk.GLArea area, Gdk.GLContext ctx) {
-        switch (render_mode) {
-            case 0:
-                GL.glPolygonMode(GL.GL_FRONT_AND_BACK, GL.GL_FILL);
-                render_mode = -1;
-                break;
-            case 1:
-                GL.glPolygonMode(GL.GL_FRONT_AND_BACK, GL.GL_LINE);
-                render_mode = -1;
-                break;
-            case 2:
-                GL.glPolygonMode(GL.GL_FRONT_AND_BACK, GL.GL_POINT);
-                render_mode = -1;
-                break;
-        }
+        // switch (render_mode) {
+        //     case 0:
+        //         GL.glPolygonMode(GL.GL_FRONT_AND_BACK, GL.GL_FILL);
+        //         render_mode = -1;
+        //         break;
+        //     case 1:
+        //         GL.glPolygonMode(GL.GL_FRONT_AND_BACK, GL.GL_LINE);
+        //         render_mode = -1;
+        //         break;
+        //     case 2:
+        //         GL.glPolygonMode(GL.GL_FRONT_AND_BACK, GL.GL_POINT);
+        //         render_mode = -1;
+        //         break;
+        // }
         
-        wave_material.time++;
+        // wave_material.time++;
         
         viewport.render();
         return true;
@@ -204,6 +229,7 @@ public class MainWindow : Adw.ApplicationWindow {
         viewport.current_camera = camera;
         viewport.current_camera.position = Vec3.from_data(0, 0, 3);
         viewport.current_camera.look_at();
+        add_object("Debug Grid", new GridFloor());
         add_object("Example Cube",
             new Mesh3D() {
                 mesh = new BoxMesh()

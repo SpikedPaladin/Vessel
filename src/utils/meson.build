@@ -1,3 +1,5 @@
 vessel_sources += files(
-    'color.vala'
+    'array-buffer.vala',
+    'color.vala',
+    'utf8-input-stream.vala'
 )

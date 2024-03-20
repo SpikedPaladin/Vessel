@@ -19,13 +19,13 @@ namespace Vessel {
             
 		    for (j = 0; j <= sectors; ++j) {
 			    float horAngle = (float) (Math.PI * j / sectors);
-			    float z = radius * (float) Math.cos(horAngle);
-			    float ringRadius = radius * (float) Math.sin(horAngle);
+			    float z = radius * Math.cosf(horAngle);
+			    float ringRadius = radius * Math.sinf(horAngle);
                 
 			    for (i = 0; i <= stacks; ++i) {
-				    float verAngle = (float) (2.0f * Math.PI * i / stacks);
-				    float x = ringRadius * (float) Math.cos(verAngle);
-				    float y = ringRadius * (float) Math.sin(verAngle);
+				    float verAngle = (float) (2F * Math.PI * i / stacks);
+				    float x = ringRadius * Math.cosf(verAngle);
+				    float y = ringRadius * Math.sinf(verAngle);
                     
 				    normals[vertIndex] = x * normLen;
 				    vertices[vertIndex++] = x;
@@ -70,7 +70,7 @@ namespace Vessel {
 		    for (j = 0; j <= sectors; ++j) {
 			    for (i = stacks; i >= 0; --i) {
                     float u = (float) i / stacks;
-				    texture_coords[numUvs++] = mirror_texture_coords ? 1 - u : u;
+				    texture_coords[numUvs++] = mirror_texture_coords ? 1F - u : u;
 				    texture_coords[numUvs++] = (float) j / sectors;
 			    }
 		    }
@@ -80,13 +80,21 @@ namespace Vessel {
 		    int numColors = numVertices * 4;
 		    colors = new float[numColors];
 		    for (j = 0; j < numColors; j += 4) {
-			    colors[j] = 1;
+			    colors[j] = 1.0f;
 			    colors[j + 1] = 0;
 			    colors[j + 2] = 0;
-			    colors[j + 3] = 1;
+			    colors[j + 3] = 1.0f;
 		    }
-		    
-		    set_data(vertices, normals, texture_coords, colors, indices, false);
+            
+            var arrays = new HashTable<ArrayType, ArrayBuffer>(null, null);
+            
+            arrays[ArrayType.ARRAY_VERTEX] = new FloatArrayBuffer.from_array(vertices);
+            arrays[ArrayType.ARRAY_TEXTURE] = new FloatArrayBuffer.from_array(texture_coords);
+            arrays[ArrayType.ARRAY_NORMAL] = new FloatArrayBuffer.from_array(normals);
+            arrays[ArrayType.ARRAY_COLOR] = new FloatArrayBuffer.from_array(colors);
+            arrays[ArrayType.ARRAY_INDEX] = new UShortArrayBuffer.from_array(indices);
+            
+            add_surface_from_arrays(arrays);
         }
     }
 }

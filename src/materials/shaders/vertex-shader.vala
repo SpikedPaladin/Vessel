@@ -6,15 +6,15 @@ namespace Vessel {
         public float time;
         
         // Shader inputs
-        private int model_matrix_handle;
-        private int mv_matrix_handle;
-        private int mvp_matrix_handle;
-        private int unif_time;
-        private int attr_vertex_position;
-        private int attr_vertex_normal;
-        private int attr_vertex_tex_coord;
-        private int attr_vertex_color;
-        private int unif_color;
+        private GL.Uniform model_matrix_handle;
+        private GL.Uniform mv_matrix_handle;
+        private GL.Uniform mvp_matrix_handle;
+        private GL.Uniform unif_time;
+        private GL.VertexAttribute attr_vertex_position;
+        private GL.VertexAttribute attr_vertex_normal;
+        private GL.VertexAttribute attr_vertex_tex_coord;
+        private GL.VertexAttribute attr_vertex_color;
+        private GL.Uniform unif_color;
         
         public VertexShader.default() {
             this.from_uri("resource:///vessel/shaders/vertex.glsl");
@@ -36,63 +36,65 @@ namespace Vessel {
             shader_string = source;
         }
         
-        public void set_vertices(uint vertex_buffer_handle, int type = GL_FLOAT, int stride = 0, int? offset = null) {
-            glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer_handle);
-            glEnableVertexAttribArray(attr_vertex_position);
-            glVertexAttribPointer(attr_vertex_position, 3, type, (GLboolean) GL_FALSE, 0, (GLvoid[]) offset);
+        public void set_vertices(uint vertex_buffer_handle, int type = GL.FLOAT, int stride = 0, int offset = 0) {
+            GL.bind_buffer(GL.ARRAY_BUFFER, vertex_buffer_handle);
+            
+            attr_vertex_position.enable_array();
+            attr_vertex_position.pointer(3, type, GL.FALSE, stride, offset);
         }
         
-        public void set_texture_coords(uint texture_coord_buffer_handle, int type = GL_FLOAT, int stride = 0, int? offset = null) {
+        public void set_texture_coords(uint texture_coord_buffer_handle, int type = GL.FLOAT, int stride = 0, int offset = 0) {
             if (attr_vertex_tex_coord < 0)
                 return;
             
-            glBindBuffer(GL_ARRAY_BUFFER, texture_coord_buffer_handle);
-            glEnableVertexAttribArray(attr_vertex_tex_coord);
-            glVertexAttribPointer(attr_vertex_tex_coord, 2, type, (GLboolean) GL_FALSE, 0, (GLvoid[]) offset);
+            GL.bind_buffer(GL.ARRAY_BUFFER, texture_coord_buffer_handle);
+            attr_vertex_tex_coord.enable_array();
+            attr_vertex_color.pointer(2, type, GL.FALSE, offset, stride);
         }
         
-        public void set_normals(uint normal_buffer_handle, int type = GL_FLOAT, int stride = 0, int? offset = null) {
+        public void set_normals(uint normal_buffer_handle, int type = GL.FLOAT, int stride = 0, int offset = 0) {
             if (attr_vertex_normal < 0)
                 return;
             
-            glBindBuffer(GL_ARRAY_BUFFER, normal_buffer_handle);
-            glEnableVertexAttribArray(attr_vertex_normal);
-            glVertexAttribPointer(attr_vertex_normal, 3, type, (GLboolean) GL_FALSE, 0, (GLvoid[]) offset);
+            GL.bind_buffer(GL.ARRAY_BUFFER, normal_buffer_handle);
+            attr_vertex_normal.enable_array();
+            attr_vertex_normal.pointer(3, type, GL.FALSE, stride, offset);
         }
         
-        public void set_vertex_colors(uint vertex_color_buffer_handle, int type = GL_FLOAT, int stride = 0, int? offset = null) {
+        public void set_vertex_colors(uint vertex_color_buffer_handle, int type = GL.FLOAT, int stride = 0, int offset = 0) {
             if (attr_vertex_color < 0)
                 return;
             
-            glBindBuffer(GL_ARRAY_BUFFER, vertex_color_buffer_handle);
-            glEnableVertexAttribArray(attr_vertex_color);
-            glVertexAttribPointer(attr_vertex_color, 4, type, (GLboolean) GL_FALSE, 0, (GLvoid[]) offset);
+            program.set_boolean("HaveVertexColors", GL.TRUE);
+            GL.bind_buffer(GL.ARRAY_BUFFER, vertex_color_buffer_handle);
+            attr_vertex_color.enable_array();
+            attr_vertex_color.pointer(4, type, GL.FALSE, stride, offset);
         }
         
-        public void set_model_matrix(float[] matrix) {
-            glUniformMatrix4fv(model_matrix_handle, 1, (GLboolean) GL_FALSE, matrix);
+        public void set_model_matrix(Mat4 matrix) {
+            program.set_mat4("model", ref matrix);
         }
         
-        public void set_model_view_matrix(float[] matrix) {
-            glUniformMatrix4fv(mv_matrix_handle, 1, (GLboolean) GL_FALSE, matrix);
+        public void set_model_view_matrix(Mat4 matrix) {
+            program.set_mat4("modelView", ref matrix);
         }
         
-        public void set_model_view_projection_matrix(float[] matrix) {
-            glUniformMatrix4fv(mvp_matrix_handle, 1, (GLboolean) GL_FALSE, matrix);
+        public void set_model_view_projection_matrix(Mat4 matrix) {
+            program.set_mat4("modelViewProjection", ref matrix);
         }
         
         public void set_color(float[] color) {
-            glUniform4f(unif_color, color[0], color[1], color[2], color[3]);
+            unif_color.set_4f(color[0], color[1], color[2], color[3]);
         }
         
         public override void apply_params() {
             base.apply_params();
             
-            glUniform1f(unif_time, time);
+            unif_time.set_1f(time);
         }
         
-        public override void set_locations(uint program_handle) {
-            base.set_locations(program_handle);
+        public override void set_locations(GL.Program program) {
+            base.set_locations(program);
             
             model_matrix_handle = get_uniform_location("model");
             mv_matrix_handle = get_uniform_location("modelView");
@@ -102,7 +104,6 @@ namespace Vessel {
             attr_vertex_tex_coord = get_attrib_location("vertexTexCoord");
             attr_vertex_color = get_attrib_location("vertexColor");
             unif_color = get_uniform_location("color");
-            unif_time = get_uniform_location("time");
         }
     }
 }

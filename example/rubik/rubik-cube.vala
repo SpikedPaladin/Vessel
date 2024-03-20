@@ -181,7 +181,7 @@ public class RubikCube : Node3D {
         });
     }
     
-    public override void render(Camera camera, Material? scene_material = null) {
+    public override void render(Camera camera, ShaderMaterial scene_material) {
         base.render(camera, scene_material);
         
         queue.render();

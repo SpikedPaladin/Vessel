@@ -82,6 +82,11 @@ template $MainWindow : Adw.ApplicationWindow {
                                             label: "Rubik Cube";
                                             clicked => $add_rubik_cube();
                                         }
+                                        Button {
+                                            styles ["flat"]
+                                            label: "Chess Board";
+                                            clicked => $add_chess_board();
+                                        }
                                     }
                                 }
                             }
@@ -136,9 +141,16 @@ template $MainWindow : Adw.ApplicationWindow {
                 hexpand: true;
                 vexpand: true;
                 
-                GestureDrag drag {
+                GestureDrag arcball_rotate {
+                    button: 2;
                     drag-begin => $on_start_rotate();
                     drag-update => $on_rotate();
+                }
+                
+                GestureDrag fp_rotate {
+                    button: 3;
+                    drag-begin => $on_start_fp_rotate();
+                    drag-update => $on_fp_rotate();
                 }
                 
                 EventControllerScroll {
