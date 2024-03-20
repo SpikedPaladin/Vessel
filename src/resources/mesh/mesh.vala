@@ -33,50 +33,7 @@ namespace Vessel {
             program.set_vec3("CameraPosition", camera.position);
             program.set_mat4("model", ref model_matrix);
             surfaces.foreach((_, surface) => {
-                surface.enable_arrays(program);
-                // update the material
-                if (surface.material != null) {
-                    message(@"$(surface.material)");
-                    // debug (@"surface has $(surface.material)");
-                    program.set_vec3("AmbientColor", surface.material.ambient_color);
-                    if (surface.material.ambient_texture != null) {
-                        program.set_boolean("HaveAmbientTex", GL.TRUE);
-                        GL.active_texture(GL.TEXTURE0);
-                        GL.bind_texture(GL.TEXTURE_2D, surface.material.ambient_texture.id);
-                    } else {
-                        program.set_boolean("HaveAmbientTex", GL.FALSE);
-                    }
-                    program.set_vec3("DiffuseColor", surface.material.diffuse_color);
-                    if (surface.material.diffuse_texture != null) {
-                        program.set_boolean("HaveDiffuseTex", GL.TRUE);
-                        GL.active_texture(GL.TEXTURE1);
-                        GL.bind_texture(GL.TEXTURE_2D, surface.material.diffuse_texture.id);
-                    } else {
-                        program.set_boolean("HaveDiffuseTex", GL.FALSE);
-                    }
-                    program.set_vec3("SpecularColor", surface.material.specular_color);
-                    program.set_float("SpecularCoeff", surface.material.specular_exponent);
-                    if (surface.material.specular_texture != null) {
-                        program.set_boolean("HaveSpecularTex", GL.TRUE);
-                        GL.active_texture(GL.TEXTURE2);
-                        GL.bind_texture(GL.TEXTURE_2D, surface.material.specular_texture.id);
-                    } else {
-                        program.set_boolean("HaveSpecularTex", GL.FALSE);
-                    }
-                } else {
-                    program.set_vec3("AmbientColor", Vec3());
-                    program.set_vec3("DiffuseColor", Vec3());
-                    program.set_vec3("SpecularColor", Vec3());
-                    program.set_float("SpecularCoeff", 0F);
-                    program.set_boolean("HaveAmbientTex", GL.FALSE);
-                    program.set_boolean("HaveDiffuseTex", GL.FALSE);
-                    program.set_boolean("HaveSpecularTex", GL.FALSE);
-                }
-                
-                program.set_boolean("HaveVertexColors", surface.arrays.contains(ArrayType.ARRAY_COLOR) ? GL.TRUE : GL.FALSE);
-                program.set_boolean("Selected", GL.FALSE);
-                
-                surface.render();
+                surface.render(program);
             });
         }
     }
