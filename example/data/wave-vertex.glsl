@@ -1,17 +1,20 @@
 #version 330
 
+// Input vertex attributes
 in vec3 vertexPosition;
 in vec2 vertexTexCoord;
 in vec3 vertexNormal;
 in vec4 vertexColor;
 
-out vec2 TexCoord;
-out vec3 Normal;
-out vec3 FragPosition;
-out vec4 VertexColor;
-
+// Input uniform variables
 uniform mat4 modelViewProjection;
 uniform mat4 model;
+
+// Output vertex attributes
+out vec3 FragPosition;
+out vec2 FragTexCoord;
+out vec3 FragNormal;
+out vec4 FragColor;
 
 uniform float time;
 
@@ -40,5 +43,5 @@ void main(void) {
     gPosition = timeVec;
     
     gl_Position = modelViewProjection * vec4(gPosition, 1.0);
-    VertexColor = vec4(normalize(gPosition), 1.0);
+    FragColor = vec4(normalize(gPosition), 1.0);
 }
