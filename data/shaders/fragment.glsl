@@ -40,21 +40,19 @@ uniform sampler2D SpecularTex;
 uniform bool Selected;
 
 void main() {
+    vec3 light = normalize(LightPosition - FragPosition);
+    vec3 view = normalize(CameraPosition - FragPosition);
+    vec3 normal = normalize(FragNormal);
+    
+    // ambient lighting
     vec3 ambient = AmbientLight * AmbientColor;
-
-    // direction to light
-    vec3 Li = normalize(LightPosition - FragPosition);
-    // direction to camera
-    vec3 v = normalize(CameraPosition - FragPosition);
-    // half vector (bisects Li and V)
-    vec3 h = (v + Li) / length(v + Li);
-
+    
     // diffuse lighting
-    vec3 diffuse = max(dot(FragNormal, Li), 0.0) * DiffuseColor;
-
+    vec3 diffuse = max(dot(normal, light), 0.0) * DiffuseColor;
+    
     // specular lighting
-    vec3 specular = pow(max(dot(FragNormal, h), 0.0), SpecularCoeff) * SpecularColor;
-
+    vec3 specular = pow(max(dot(view, reflect(-light, normal)), 0.0), SpecularCoeff) * SpecularColor;
+    
     // textures
     if (HaveAmbientTex)
         ambient *= vec3(texture(AmbientTex, FragTexCoord));
@@ -62,10 +60,10 @@ void main() {
         diffuse *= vec3(texture(DiffuseTex, FragTexCoord));
     if (HaveSpecularTex)
         specular *= vec3(texture(SpecularTex, FragTexCoord));
-
+    
     vec3 color = ambient + diffuse + specular;
     if (Selected)       // highlight the edges of the object if it's selected
-        color = mix(color, vec3(1.0, 0.0, 0.0), 1.0 - abs(dot(FragNormal, v)));
+        color = mix(color, vec3(1.0, 0.0, 0.0), 1.0 - abs(dot(normal, view)));
     
     if (HaveVertexColors)
         color *= FragColor.rgb;
