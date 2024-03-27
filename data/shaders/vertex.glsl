@@ -22,7 +22,7 @@ void main() {
     FragTexCoord = vertexTexCoord;
     FragColor = vertexColor;
     // XXX: calculate transpose-inverse of model on the CPU side
-    FragNormal = normalize(mat3(transpose(inverse(model))) * vertexNormal);
+    FragNormal = normalize(vec3(transpose(inverse(model)) * vec4(vertexNormal, 1.0)));
     
     // Final vertex position
     gl_Position = modelViewProjection * vec4(vertexPosition, 1.0);
