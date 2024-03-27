@@ -49,6 +49,14 @@ namespace Vessel {
             return vbo;
         }
         
+        public override uint create_ibo() {
+            ibo = GL.gen_buffer();
+            GL.bind_buffer(GL.ELEMENT_ARRAY_BUFFER, ibo);
+            GL.buffer_data(GL.ELEMENT_ARRAY_BUFFER, size(), get_data(), GL.STATIC_DRAW);
+            
+            return ibo;
+        }
+        
         public override GL.GLvoid[] get_data() {
             return (GL.GLvoid[]) data.data;
         }
@@ -83,10 +91,18 @@ namespace Vessel {
         
         public override uint create_vbo() {
             vbo = GL.gen_buffer();
-            GL.bind_buffer(GL.ELEMENT_ARRAY_BUFFER, vbo);
-            GL.buffer_data(GL.ELEMENT_ARRAY_BUFFER, size(), get_data(), GL.STATIC_DRAW);
+            GL.bind_buffer(GL.ARRAY_BUFFER, vbo);
+            GL.buffer_data(GL.ARRAY_BUFFER, size(), get_data(), GL.STATIC_DRAW);
             
             return vbo;
+        }
+        
+        public override uint create_ibo() {
+            ibo = GL.gen_buffer();
+            GL.bind_buffer(GL.ELEMENT_ARRAY_BUFFER, ibo);
+            GL.buffer_data(GL.ELEMENT_ARRAY_BUFFER, size(), get_data(), GL.STATIC_DRAW);
+            
+            return ibo;
         }
         
         public override GL.GLvoid[] get_data() {
@@ -104,9 +120,11 @@ namespace Vessel {
     
     public abstract class ArrayBuffer {
         public uint vbo;
+        public uint ibo;
         
         public virtual void bind(GL.VertexAttribute attr, int size) {}
         public abstract uint create_vbo();
+        public abstract uint create_ibo();
         public abstract GL.GLvoid[] get_data();
         public abstract size_t size();
         public abstract int count();

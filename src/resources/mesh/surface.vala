@@ -26,13 +26,13 @@ namespace Vessel {
         public bool is_dirty = true;
         public string id { get; set; }
         public uint vao { get; set; }
-        public uint vbo { get; set; }
-
+        public uint ibo { get; set; }
+        
         /**
          * Number of vertices in this mesh. Pass this value to {@link GL.draw_arrays}
          */
         public int size { get; set; }
-
+        
         public StandartMaterial? material { get; set; }
         
         public Surface() {}
@@ -81,7 +81,7 @@ namespace Vessel {
             program.set_boolean("Selected", GL.FALSE);
             GL.bind_vertex_array(vao);
             if (arrays.contains(ArrayType.ARRAY_INDEX)) {
-                GL.bind_buffer(GL.ELEMENT_ARRAY_BUFFER, vbo);
+                GL.bind_buffer(GL.ELEMENT_ARRAY_BUFFER, ibo);
                 GL.draw_elements(draw_mode, arrays[ArrayType.ARRAY_INDEX].count(), GL.UNSIGNED_SHORT);
             } else {
                 GL.draw_arrays(draw_mode, 0, size);
@@ -121,7 +121,7 @@ namespace Vessel {
             }
             
             if (arrays.contains(ArrayType.ARRAY_INDEX)) {
-                vbo = arrays[ArrayType.ARRAY_INDEX].create_vbo();
+                ibo = arrays[ArrayType.ARRAY_INDEX].create_ibo();
             }
             
             GL.bind_vertex_array(0);
@@ -134,7 +134,7 @@ namespace Vessel {
         }
         
         public string to_string () {
-            return @"$id (vbo: $vbo)";
+            return @"$id (ibo: $ibo)";
         }
         
         ~Surface () {
