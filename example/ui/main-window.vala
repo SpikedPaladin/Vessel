@@ -35,6 +35,8 @@ public class MainWindow : Adw.ApplicationWindow {
         
         wave_material = new ShaderMaterial(new VertexShader.from_uri("resource:///example/wave-vertex.glsl"));
         
+        area.set_allowed_apis(Gdk.GLAPI.GL);
+        
         area.add_tick_callback(() => {
             if (!toggle_pause.active)
                 area.queue_render();
