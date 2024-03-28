@@ -3,6 +3,8 @@ namespace Vessel {
     public class StandartMaterial : Material {
         public string id { get; construct; }
         
+        public bool enable_shading { get; set; default = true; }
+        
         public Vec3 ambient_color { get; set; }
         public Vec3 diffuse_color { get; set; }
         public Vec3 specular_color { get; set; }

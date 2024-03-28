@@ -6,7 +6,7 @@ namespace Vessel {
         public override void render(Camera camera, ShaderMaterial scene_material) {
             base.render(camera, scene_material);
             
-            mesh?.render(scene_material, camera, model_matrix, mvp_matrix);
+            mesh?.render(scene_material, camera, model_matrix, mv_matrix, mvp_matrix);
         }
     }
 }

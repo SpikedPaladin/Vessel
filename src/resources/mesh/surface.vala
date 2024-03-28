@@ -37,48 +37,51 @@ namespace Vessel {
         
         public Surface() {}
         
-        public void render(GL.Program program) {
+        public void render(Material? mesh_material, GL.Program program) {
+            var material = mesh_material as StandartMaterial ?? this.material;
             enable_arrays(program);
             // update the material
             if (material != null) {
                 //message(@"$(material)");
+                program.set_boolean("EnableShading", material.enable_shading);
                 program.set_vec3("AmbientColor", material.ambient_color);
                 if (material.ambient_texture != null) {
-                    program.set_boolean("HaveAmbientTex", GL.TRUE);
+                    program.set_boolean("HaveAmbientTex", true);
                     GL.active_texture(GL.TEXTURE0);
                     GL.bind_texture(GL.TEXTURE_2D, material.ambient_texture.id);
                 } else {
-                    program.set_boolean("HaveAmbientTex", GL.FALSE);
+                    program.set_boolean("HaveAmbientTex", false);
                 }
                 program.set_vec3("DiffuseColor", material.diffuse_color);
                 if (material.diffuse_texture != null) {
-                    program.set_boolean("HaveDiffuseTex", GL.TRUE);
+                    program.set_boolean("HaveDiffuseTex", true);
                     GL.active_texture(GL.TEXTURE1);
                     GL.bind_texture(GL.TEXTURE_2D, material.diffuse_texture.id);
                 } else {
-                    program.set_boolean("HaveDiffuseTex", GL.FALSE);
+                    program.set_boolean("HaveDiffuseTex", false);
                 }
                 program.set_vec3("SpecularColor", material.specular_color);
                 program.set_float("SpecularCoeff", material.specular_exponent);
                 if (material.specular_texture != null) {
-                    program.set_boolean("HaveSpecularTex", GL.TRUE);
+                    program.set_boolean("HaveSpecularTex", true);
                     GL.active_texture(GL.TEXTURE2);
                     GL.bind_texture(GL.TEXTURE_2D, material.specular_texture.id);
                 } else {
-                    program.set_boolean("HaveSpecularTex", GL.FALSE);
+                    program.set_boolean("HaveSpecularTex", false);
                 }
             } else {
                 program.set_vec3("AmbientColor", Vec3.from_data(1, 1, 1));
                 program.set_vec3("DiffuseColor", Vec3.from_data(0.8F, 0.8F, 0.8F));
                 program.set_vec3("SpecularColor", Vec3.from_data(0.5F, 0.5F, 0.5F));
                 program.set_float("SpecularCoeff", 323);
-                program.set_boolean("HaveAmbientTex", GL.FALSE);
-                program.set_boolean("HaveDiffuseTex", GL.FALSE);
-                program.set_boolean("HaveSpecularTex", GL.FALSE);
+                program.set_boolean("EnableShading", true);
+                program.set_boolean("HaveAmbientTex", false);
+                program.set_boolean("HaveDiffuseTex", false);
+                program.set_boolean("HaveSpecularTex", false);
             }
             
-            program.set_boolean("HaveVertexColors", arrays.contains(ArrayType.ARRAY_COLOR) ? GL.TRUE : GL.FALSE);
-            program.set_boolean("Selected", GL.FALSE);
+            program.set_boolean("HaveVertexColors", arrays.contains(ArrayType.ARRAY_COLOR));
+            program.set_boolean("Selected", false);
             GL.bind_vertex_array(vao);
             if (arrays.contains(ArrayType.ARRAY_INDEX)) {
                 GL.bind_buffer(GL.ELEMENT_ARRAY_BUFFER, ibo);

@@ -65,7 +65,7 @@ namespace Vessel {
             if (attr_vertex_color < 0)
                 return;
             
-            program.set_boolean("HaveVertexColors", GL.TRUE);
+            program.set_boolean("HaveVertexColors", true);
             GL.bind_buffer(GL.ARRAY_BUFFER, vertex_color_buffer_handle);
             attr_vertex_color.enable_array();
             attr_vertex_color.pointer(4, type, GL.FALSE, stride, offset);

@@ -9,6 +9,9 @@ in vec4 FragColor;
 
 out vec4 FinalColor;
 
+// disable shading
+uniform bool EnableShading;
+
 // the color of the ambient light
 uniform vec3 AmbientLight;
 
@@ -40,6 +43,11 @@ uniform sampler2D SpecularTex;
 uniform bool Selected;
 
 void main() {
+    if (!EnableShading) {
+        FinalColor = FragColor;
+        return;
+    }
+    
     vec3 light = normalize(LightPosition - FragPosition);
     vec3 view = normalize(CameraPosition - FragPosition);
     vec3 normal = normalize(FragNormal);

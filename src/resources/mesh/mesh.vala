@@ -15,7 +15,7 @@ namespace Vessel {
             surfaces[@"surface#$(surfaces.length)"] = surface;
         }
         
-        public void render(ShaderMaterial scene_material, Camera camera, Mat4 model_matrix, Mat4 mvp_matrix) {
+        public void render(ShaderMaterial scene_material, Camera camera, Mat4 model_matrix, Mat4 mv_matrix, Mat4 mvp_matrix) {
             var material = material as ShaderMaterial ?? scene_material;
             
             material.use_program();
@@ -33,7 +33,7 @@ namespace Vessel {
             program.set_vec3("CameraPosition", camera.position);
             program.set_mat4("model", ref model_matrix);
             surfaces.foreach((_, surface) => {
-                surface.render(program);
+                surface.render(this.material, program);
             });
         }
     }

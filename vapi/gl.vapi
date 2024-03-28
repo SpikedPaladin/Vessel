@@ -9559,9 +9559,9 @@ namespace GL {
                 uniform.set_3fv (ref data);
             }
 
-            public void set_boolean (string name, boolean value) {
+            public void set_boolean (string name, bool value) {
                 Uniform uniform = get_uniform_location (name);
-                uniform.set_1i (value);
+                uniform.set_1i (value ? GL.TRUE : GL.FALSE);
             }
 
             public void set_int (string name, int value) {
