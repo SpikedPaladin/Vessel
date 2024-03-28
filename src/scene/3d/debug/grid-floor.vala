@@ -3,7 +3,11 @@ namespace Vessel {
     public class GridFloor : Mesh3D {
         
         construct {
-            mesh = new Mesh();
+            mesh = new Mesh() {
+                material = new StandartMaterial("grid_floor") {
+                    enable_shading = false
+                }
+            };
             
             var vertices = new FloatArrayBuffer();
             var colors = new FloatArrayBuffer();
