@@ -37,7 +37,7 @@ namespace Vessel {
         public override void bind(GL.VertexAttribute attr, int size) {
             create_vbo();
             
-            attr.pointer(size, GL.FLOAT, GL.FALSE);
+            attr.pointer(size, GL.FLOAT);
             attr.enable_array();
         }
         

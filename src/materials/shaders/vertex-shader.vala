@@ -40,7 +40,7 @@ namespace Vessel {
             GL.bind_buffer(GL.ARRAY_BUFFER, vertex_buffer_handle);
             
             attr_vertex_position.enable_array();
-            attr_vertex_position.pointer(3, type, GL.FALSE, stride, offset);
+            attr_vertex_position.pointer(3, type, GL.FALSE, stride, offset.to_pointer());
         }
         
         public void set_texture_coords(uint texture_coord_buffer_handle, int type = GL.FLOAT, int stride = 0, int offset = 0) {
@@ -49,7 +49,7 @@ namespace Vessel {
             
             GL.bind_buffer(GL.ARRAY_BUFFER, texture_coord_buffer_handle);
             attr_vertex_tex_coord.enable_array();
-            attr_vertex_color.pointer(2, type, GL.FALSE, offset, stride);
+            attr_vertex_color.pointer(2, type, GL.FALSE, stride, offset.to_pointer());
         }
         
         public void set_normals(uint normal_buffer_handle, int type = GL.FLOAT, int stride = 0, int offset = 0) {
@@ -58,7 +58,7 @@ namespace Vessel {
             
             GL.bind_buffer(GL.ARRAY_BUFFER, normal_buffer_handle);
             attr_vertex_normal.enable_array();
-            attr_vertex_normal.pointer(3, type, GL.FALSE, stride, offset);
+            attr_vertex_normal.pointer(3, type, GL.FALSE, stride, offset.to_pointer());
         }
         
         public void set_vertex_colors(uint vertex_color_buffer_handle, int type = GL.FLOAT, int stride = 0, int offset = 0) {
@@ -68,7 +68,7 @@ namespace Vessel {
             program.set_boolean("HaveVertexColors", true);
             GL.bind_buffer(GL.ARRAY_BUFFER, vertex_color_buffer_handle);
             attr_vertex_color.enable_array();
-            attr_vertex_color.pointer(4, type, GL.FALSE, stride, offset);
+            attr_vertex_color.pointer(4, type, GL.FALSE, stride, offset.to_pointer());
         }
         
         public void set_model_matrix(Mat4 matrix) {
